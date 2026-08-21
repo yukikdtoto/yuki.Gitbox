@@ -170,8 +170,11 @@ async function analyzeFoodPhoto({ dataUrl, apiKey, model }) {
 
   const data = await resp.json();
   const text = (data.content || []).map((b) => b.text || "").join("");
-  const parsed = extractJson(text);
+  return normalizeAnalysisResult(extractJson(text));
+}
 
+// APIレスポンス・手動貼り付けテキストの両方で共通して使う正規化処理
+function normalizeAnalysisResult(parsed) {
   const nutrients = {};
   Object.keys(NUTRIENT_META).forEach((k) => {
     const v = Number(parsed?.nutrients?.[k]);
@@ -185,4 +188,12 @@ async function analyzeFoodPhoto({ dataUrl, apiKey, model }) {
     confidence: parsed.confidence || "medium",
     note: parsed.note || "",
   };
+}
+
+// APIキーを使わず、claude.aiなどに手動で貼り付けて得たテキスト回答からJSONを取り出して解析する(無料)
+function parseManualAnalysisText(text) {
+  if (!text || !text.trim()) {
+    throw new ApiParseError("貼り付けられたテキストが空です。");
+  }
+  return normalizeAnalysisResult(extractJson(text));
 }

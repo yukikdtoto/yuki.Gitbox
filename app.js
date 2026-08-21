@@ -6,7 +6,7 @@
 const state = {
   profile: Storage.getProfile(),
   view: null,
-  capture: { file: null, dataUrl: null, analyzing: false, result: null, error: null, note: "" },
+  capture: { file: null, dataUrl: null, analyzing: false, result: null, error: null, note: "", showManual: false },
   showDetail: false,
   historyOpenDate: null,
   editingProfile: false,
@@ -58,7 +58,7 @@ function init() {
 function setView(view) {
   state.view = view;
   if (view === "capture") {
-    state.capture = { file: null, dataUrl: null, analyzing: false, result: null, error: null, note: "" };
+    state.capture = { file: null, dataUrl: null, analyzing: false, result: null, error: null, note: "", showManual: false };
   }
   render();
   window.scrollTo(0, 0);
@@ -97,8 +97,11 @@ function onBodyClick(e) {
   switch (action) {
     case "open-camera": $("#file-camera").click(); break;
     case "open-library": $("#file-library").click(); break;
-    case "retake": state.capture = { file: null, dataUrl: null, analyzing: false, result: null, error: null, note: "" }; render(); break;
+    case "retake": state.capture = { file: null, dataUrl: null, analyzing: false, result: null, error: null, note: "", showManual: false }; render(); break;
     case "analyze": doAnalyze(); break;
+    case "toggle-manual": state.capture.showManual = !state.capture.showManual; render(); break;
+    case "copy-prompt": doCopyPrompt(); break;
+    case "parse-manual": doParseManual(); break;
     case "add-log": doAddLog(); break;
     case "delete-log": doDeleteLog(actionEl.dataset.date, actionEl.dataset.id); break;
     case "toggle-detail": state.showDetail = !state.showDetail; render(); break;
@@ -240,6 +243,27 @@ async function doAnalyze() {
     state.capture.analyzing = false;
     render();
   }
+}
+
+async function doCopyPrompt() {
+  try {
+    await navigator.clipboard.writeText(ANALYSIS_PROMPT);
+    showToast("指示文をコピーしました");
+  } catch (e) {
+    showToast("コピーに失敗しました。手動で選択してコピーしてください。");
+  }
+}
+
+function doParseManual() {
+  const input = $("#manual-json-input");
+  const text = input ? input.value : "";
+  try {
+    state.capture.result = parseManualAnalysisText(text);
+    state.capture.error = null;
+  } catch (e) {
+    state.capture.error = e.message || "貼り付けた内容の読み取りに失敗しました";
+  }
+  render();
 }
 
 function doAddLog() {
@@ -529,12 +553,26 @@ function renderCapture() {
       </form>
     `;
   } else {
+    const manualOpen = c.showManual;
     actionArea = `
       ${c.error ? `<div class="notice">${escapeHtml(c.error)}</div>` : ""}
       <div class="stack">
         <button class="btn btn-primary" data-action="analyze">この写真を解析する</button>
         <button class="btn btn-outline" data-action="retake">撮り直す</button>
       </div>
+      <button class="link-btn" data-action="toggle-manual" style="margin-top:14px;">${manualOpen ? "▲ 無料の手動方式を隠す" : "▼ 無料の手動方式を使う(APIキー不要)"}</button>
+      ${manualOpen ? `
+        <div class="card" style="margin-top:10px;">
+          <h2>無料で解析する</h2>
+          <p class="muted">① 下のボタンで解析用の指示文をコピーします。</p>
+          <button type="button" class="btn btn-outline btn-sm" data-action="copy-prompt" style="width:auto;">指示文をコピー</button>
+          <p class="muted" style="margin-top:12px;">② この写真とコピーした指示文を、お使いのclaude.aiのチャットに貼り付けて送信してください。</p>
+          <p class="muted">③ 返ってきたJSON形式の回答をコピーして、下に貼り付けてください。</p>
+          <label for="manual-json-input">回答を貼り付け</label>
+          <textarea id="manual-json-input" rows="6" placeholder='{ "items": [...], "nutrients": {...}, ... }' style="width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:12px; font-family:inherit; font-size:14px; resize:vertical;"></textarea>
+          <button type="button" class="btn btn-primary" data-action="parse-manual" style="margin-top:10px;">貼り付けた内容を読み込む</button>
+        </div>
+      ` : ""}
     `;
   }
 
