@@ -119,3 +119,20 @@ def latest_targets(closes: pd.DataFrame, prices: dict[str, float], equity_jpy: f
     units, info = weights_to_units(w, prices, equity_jpy, cfg, policy)
     info["weights"] = {k: round(v, 4) for k, v in w.items()}
     return units, info
+
+
+# 損切り幅: 終値ベースのATR近似(ECBは高値・安値が無いため |終値の前日差| の平均で代用)
+SL_ATR_MULT = 3.0
+ATR_WINDOW = 20
+
+
+def close_atr(close: pd.Series, n: int = ATR_WINDOW) -> float:
+    v = float(close.diff().abs().rolling(n).mean().iloc[-1])
+    if not math.isfinite(v) or v <= 0:
+        raise ValueError("ATR not available")
+    return v
+
+
+def stop_distance(close: pd.Series, mult: float = SL_ATR_MULT) -> float:
+    """新規注文に同梱する損切り幅(価格単位)。"""
+    return mult * close_atr(close)

@@ -1,0 +1,51 @@
+name: fxbot-daily
+# 既定は dry-run。リポジトリ変数 FXBOT_PRACTICE_ORDERS が "true" のときだけ practice へ発注する。
+# schedule は既定ブランチ(main)上のこのファイルでしか動かない。
+on:
+  schedule:
+    - cron: "41 16 * * *"   # 毎日 16:41 UTC(ECB 参照レート公表後)
+  workflow_dispatch:
+    inputs:
+      init:
+        description: "初回のみ: 運用開始(state 初期化)。人間が明示的に実行"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fxbot-state
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: fxbot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: tests (失敗したら runner を動かさない)
+        run: python -m pytest -q -p no:cacheprovider
+      - name: runner
+        env:
+          OANDA_API_KEY: ${{ secrets.OANDA_API_KEY }}
+          OANDA_ACCOUNT_ID: ${{ secrets.OANDA_ACCOUNT_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          HEALTHCHECK_URL: ${{ secrets.HEALTHCHECK_URL }}
+          FXBOT_PRACTICE_ORDERS: ${{ vars.FXBOT_PRACTICE_ORDERS }}
+          INIT: ${{ inputs.init }}
+        run: |
+          git config user.name "fxbot[bot]"
+          git config user.email "fxbot-bot@users.noreply.github.com"
+          ARGS="--git --require-webhook"
+          if [ "${FXBOT_PRACTICE_ORDERS}" != "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ "${INIT}" = "true" ]; then ARGS="$ARGS --init"; fi
+          echo "args: $ARGS"
+          python -m fxbot.runner $ARGS

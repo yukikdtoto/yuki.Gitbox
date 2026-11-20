@@ -1,0 +1,693 @@
+{
+  "base": {
+    "generated_at": "2026-11-20T17:13:23+00:00",
+    "data_range": "2021-05-04..2026-11-20",
+    "initial_jpy": 30000.0,
+    "cost_multiplier": 1.0,
+    "baseline": {
+      "target_vol": 0.1,
+      "er_min": 0.2,
+      "lookback": 60,
+      "vol_window": 20,
+      "max_gross_leverage": 25.0
+    },
+    "windows": [
+      {
+        "train": "2021-11-20..2023-11-20",
+        "test": "2023-11-20..2024-05-20",
+        "chosen": "tv=0.60,er=0.0",
+        "train_calmar": 1.41,
+        "wf_test": {
+          "total_return": -0.1023,
+          "cagr": -0.1948,
+          "max_dd": -0.3676,
+          "calmar": -0.5299
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 33,
+        "wf_rounded_to_zero": 384,
+        "wf_exposure_days": 56
+      },
+      {
+        "train": "2022-05-20..2024-05-20",
+        "test": "2024-05-20..2024-11-20",
+        "chosen": "tv=0.80,er=0.0",
+        "train_calmar": 0.719,
+        "wf_test": {
+          "total_return": -0.393,
+          "cagr": -0.6288,
+          "max_dd": -0.3982,
+          "calmar": -1.5791
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": "2024-07-25",
+        "base_halted": null,
+        "wf_trades": 24,
+        "wf_rounded_to_zero": 98,
+        "wf_exposure_days": 48
+      },
+      {
+        "train": "2022-11-20..2024-11-20",
+        "test": "2024-11-20..2025-05-20",
+        "chosen": "tv=0.10,er=0.0",
+        "train_calmar": 0.0,
+        "wf_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 0,
+        "wf_rounded_to_zero": 492,
+        "wf_exposure_days": 0
+      },
+      {
+        "train": "2023-05-20..2025-05-20",
+        "test": "2025-05-20..2025-11-20",
+        "chosen": "tv=0.10,er=0.0",
+        "train_calmar": 0.0,
+        "wf_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 0,
+        "wf_rounded_to_zero": 528,
+        "wf_exposure_days": 0
+      },
+      {
+        "train": "2023-11-20..2025-11-20",
+        "test": "2025-11-20..2026-05-20",
+        "chosen": "tv=0.10,er=0.0",
+        "train_calmar": 0.0,
+        "wf_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 0,
+        "wf_rounded_to_zero": 492,
+        "wf_exposure_days": 0
+      },
+      {
+        "train": "2024-05-20..2026-05-20",
+        "test": "2026-05-20..2026-11-20",
+        "chosen": "tv=0.80,er=0.2",
+        "train_calmar": 0.247,
+        "wf_test": {
+          "total_return": -0.3415,
+          "cagr": -0.5637,
+          "max_dd": -0.3415,
+          "calmar": -1.6505
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 18,
+        "wf_rounded_to_zero": 32,
+        "wf_exposure_days": 17
+      }
+    ],
+    "stitched": {
+      "walkforward": {
+        "total_return": -0.6412,
+        "cagr": -0.2894,
+        "max_dd": -0.7165,
+        "calmar": -0.4038
+      },
+      "baseline": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0
+      }
+    },
+    "fixed_params_oos": {
+      "tv=0.10,er=0.0": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.10,er=0.1": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.10,er=0.2": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.10,er=0.3": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.20,er=0.0": {
+        "total_return": 0.0227,
+        "cagr": 0.0075,
+        "max_dd": -0.0023,
+        "calmar": 3.3028,
+        "halts": 0
+      },
+      "tv=0.20,er=0.1": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.20,er=0.2": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.20,er=0.3": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.40,er=0.0": {
+        "total_return": -0.2105,
+        "cagr": -0.0757,
+        "max_dd": -0.2105,
+        "calmar": -0.3598,
+        "halts": 0
+      },
+      "tv=0.40,er=0.1": {
+        "total_return": -0.1741,
+        "cagr": -0.0618,
+        "max_dd": -0.1741,
+        "calmar": -0.3547,
+        "halts": 0
+      },
+      "tv=0.40,er=0.2": {
+        "total_return": -0.0222,
+        "cagr": -0.0074,
+        "max_dd": -0.0403,
+        "calmar": -0.1846,
+        "halts": 0
+      },
+      "tv=0.40,er=0.3": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.60,er=0.0": {
+        "total_return": -0.6048,
+        "cagr": -0.2661,
+        "max_dd": -0.7098,
+        "calmar": -0.3749,
+        "halts": 2
+      },
+      "tv=0.60,er=0.1": {
+        "total_return": -0.6747,
+        "cagr": -0.3122,
+        "max_dd": -0.6754,
+        "calmar": -0.4623,
+        "halts": 0
+      },
+      "tv=0.60,er=0.2": {
+        "total_return": -0.1498,
+        "cagr": -0.0527,
+        "max_dd": -0.2471,
+        "calmar": -0.2131,
+        "halts": 0
+      },
+      "tv=0.60,er=0.3": {
+        "total_return": -0.2267,
+        "cagr": -0.0821,
+        "max_dd": -0.2302,
+        "calmar": -0.3568,
+        "halts": 0
+      },
+      "tv=0.80,er=0.0": {
+        "total_return": -0.6997,
+        "cagr": -0.3302,
+        "max_dd": -0.7513,
+        "calmar": -0.4396,
+        "halts": 5
+      },
+      "tv=0.80,er=0.1": {
+        "total_return": -0.7157,
+        "cagr": -0.3424,
+        "max_dd": -0.7346,
+        "calmar": -0.4661,
+        "halts": 2
+      },
+      "tv=0.80,er=0.2": {
+        "total_return": -0.288,
+        "cagr": -0.107,
+        "max_dd": -0.4063,
+        "calmar": -0.2633,
+        "halts": 0
+      },
+      "tv=0.80,er=0.3": {
+        "total_return": -0.1211,
+        "cagr": -0.0421,
+        "max_dd": -0.2505,
+        "calmar": -0.1681,
+        "halts": 0
+      }
+    },
+    "per_candidate": {
+      "tv=0.10,er=0.0": "不採用: Calmar改善なし",
+      "tv=0.10,er=0.1": "不採用: Calmar改善なし",
+      "tv=0.10,er=0.2": "現行",
+      "tv=0.10,er=0.3": "不採用: Calmar改善なし",
+      "tv=0.20,er=0.0": "検証期間で改善(ただし事後選択のため単独では採用しない)",
+      "tv=0.20,er=0.1": "不採用: Calmar改善なし",
+      "tv=0.20,er=0.2": "不採用: Calmar改善なし",
+      "tv=0.20,er=0.3": "不採用: Calmar改善なし",
+      "tv=0.40,er=0.0": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.40,er=0.1": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.40,er=0.2": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.40,er=0.3": "不採用: Calmar改善なし",
+      "tv=0.60,er=0.0": "不採用: Calmar改善なし・リターン悪化・キルスイッチ2回",
+      "tv=0.60,er=0.1": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.60,er=0.2": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.60,er=0.3": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.80,er=0.0": "不採用: Calmar改善なし・リターン悪化・キルスイッチ5回",
+      "tv=0.80,er=0.1": "不採用: Calmar改善なし・リターン悪化・キルスイッチ2回",
+      "tv=0.80,er=0.2": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.80,er=0.3": "不採用: Calmar改善なし・リターン悪化"
+    },
+    "windows_wf_ge_base": "3/6",
+    "latest_choice": {
+      "target_vol": 0.8,
+      "er_min": 0.2,
+      "lookback": 60,
+      "vol_window": 20,
+      "max_gross_leverage": 25.0
+    },
+    "adopt": false,
+    "reasons": [
+      "検証期間Calmarが現行以下 (WF -0.404 <= 現行 0.000)",
+      "検証期間リターンが現行未満 (WF -64.1% < 現行 0.0%)",
+      "現行以上の窓が過半数でない (3/6)",
+      "検証期間中にキルスイッチ発動あり"
+    ]
+  },
+  "cost_x2": {
+    "generated_at": "2026-11-20T17:13:33+00:00",
+    "data_range": "2021-05-04..2026-11-20",
+    "initial_jpy": 30000.0,
+    "cost_multiplier": 2.0,
+    "baseline": {
+      "target_vol": 0.1,
+      "er_min": 0.2,
+      "lookback": 60,
+      "vol_window": 20,
+      "max_gross_leverage": 25.0
+    },
+    "windows": [
+      {
+        "train": "2021-11-20..2023-11-20",
+        "test": "2023-11-20..2024-05-20",
+        "chosen": "tv=0.60,er=0.0",
+        "train_calmar": 0.986,
+        "wf_test": {
+          "total_return": -0.0871,
+          "cagr": -0.1672,
+          "max_dd": -0.2757,
+          "calmar": -0.6062
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": "2024-02-06",
+        "base_halted": null,
+        "wf_trades": 18,
+        "wf_rounded_to_zero": 148,
+        "wf_exposure_days": 28
+      },
+      {
+        "train": "2022-05-20..2024-05-20",
+        "test": "2024-05-20..2024-11-20",
+        "chosen": "tv=0.80,er=0.0",
+        "train_calmar": 0.67,
+        "wf_test": {
+          "total_return": -0.2576,
+          "cagr": -0.4464,
+          "max_dd": -0.2579,
+          "calmar": -1.7309
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": "2024-06-17",
+        "base_halted": null,
+        "wf_trades": 20,
+        "wf_rounded_to_zero": 31,
+        "wf_exposure_days": 20
+      },
+      {
+        "train": "2022-11-20..2024-11-20",
+        "test": "2024-11-20..2025-05-20",
+        "chosen": "tv=0.10,er=0.0",
+        "train_calmar": 0.0,
+        "wf_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 0,
+        "wf_rounded_to_zero": 492,
+        "wf_exposure_days": 0
+      },
+      {
+        "train": "2023-05-20..2025-05-20",
+        "test": "2025-05-20..2025-11-20",
+        "chosen": "tv=0.10,er=0.0",
+        "train_calmar": 0.0,
+        "wf_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 0,
+        "wf_rounded_to_zero": 528,
+        "wf_exposure_days": 0
+      },
+      {
+        "train": "2023-11-20..2025-11-20",
+        "test": "2025-11-20..2026-05-20",
+        "chosen": "tv=0.10,er=0.0",
+        "train_calmar": 0.0,
+        "wf_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 0,
+        "wf_rounded_to_zero": 492,
+        "wf_exposure_days": 0
+      },
+      {
+        "train": "2024-05-20..2026-05-20",
+        "test": "2026-05-20..2026-11-20",
+        "chosen": "tv=0.10,er=0.0",
+        "train_calmar": 0.0,
+        "wf_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "base_test": {
+          "total_return": 0.0,
+          "cagr": 0.0,
+          "max_dd": 0.0,
+          "calmar": 0.0
+        },
+        "wf_halted": null,
+        "base_halted": null,
+        "wf_trades": 0,
+        "wf_rounded_to_zero": 528,
+        "wf_exposure_days": 0
+      }
+    ],
+    "stitched": {
+      "walkforward": {
+        "total_return": -0.3223,
+        "cagr": -0.1216,
+        "max_dd": -0.4623,
+        "calmar": -0.263
+      },
+      "baseline": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0
+      }
+    },
+    "fixed_params_oos": {
+      "tv=0.10,er=0.0": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.10,er=0.1": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.10,er=0.2": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.10,er=0.3": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.20,er=0.0": {
+        "total_return": 0.0211,
+        "cagr": 0.007,
+        "max_dd": -0.0025,
+        "calmar": 2.7931,
+        "halts": 0
+      },
+      "tv=0.20,er=0.1": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.20,er=0.2": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.20,er=0.3": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.40,er=0.0": {
+        "total_return": -0.2313,
+        "cagr": -0.0839,
+        "max_dd": -0.2313,
+        "calmar": -0.3629,
+        "halts": 0
+      },
+      "tv=0.40,er=0.1": {
+        "total_return": -0.1886,
+        "cagr": -0.0673,
+        "max_dd": -0.1886,
+        "calmar": -0.3567,
+        "halts": 0
+      },
+      "tv=0.40,er=0.2": {
+        "total_return": -0.0247,
+        "cagr": -0.0083,
+        "max_dd": -0.0418,
+        "calmar": -0.1987,
+        "halts": 0
+      },
+      "tv=0.40,er=0.3": {
+        "total_return": 0.0,
+        "cagr": 0.0,
+        "max_dd": 0.0,
+        "calmar": 0.0,
+        "halts": 0
+      },
+      "tv=0.60,er=0.0": {
+        "total_return": -0.6829,
+        "cagr": -0.318,
+        "max_dd": -0.7484,
+        "calmar": -0.4249,
+        "halts": 3
+      },
+      "tv=0.60,er=0.1": {
+        "total_return": -0.6721,
+        "cagr": -0.3104,
+        "max_dd": -0.6721,
+        "calmar": -0.4618,
+        "halts": 1
+      },
+      "tv=0.60,er=0.2": {
+        "total_return": -0.2018,
+        "cagr": -0.0723,
+        "max_dd": -0.2866,
+        "calmar": -0.2524,
+        "halts": 0
+      },
+      "tv=0.60,er=0.3": {
+        "total_return": -0.239,
+        "cagr": -0.087,
+        "max_dd": -0.2417,
+        "calmar": -0.3601,
+        "halts": 0
+      },
+      "tv=0.80,er=0.0": {
+        "total_return": -0.7038,
+        "cagr": -0.3333,
+        "max_dd": -0.7523,
+        "calmar": -0.4431,
+        "halts": 4
+      },
+      "tv=0.80,er=0.1": {
+        "total_return": -0.7628,
+        "cagr": -0.3809,
+        "max_dd": -0.777,
+        "calmar": -0.4903,
+        "halts": 3
+      },
+      "tv=0.80,er=0.2": {
+        "total_return": -0.2756,
+        "cagr": -0.1019,
+        "max_dd": -0.3343,
+        "calmar": -0.3047,
+        "halts": 1
+      },
+      "tv=0.80,er=0.3": {
+        "total_return": -0.1536,
+        "cagr": -0.0541,
+        "max_dd": -0.2681,
+        "calmar": -0.2016,
+        "halts": 0
+      }
+    },
+    "per_candidate": {
+      "tv=0.10,er=0.0": "不採用: Calmar改善なし",
+      "tv=0.10,er=0.1": "不採用: Calmar改善なし",
+      "tv=0.10,er=0.2": "現行",
+      "tv=0.10,er=0.3": "不採用: Calmar改善なし",
+      "tv=0.20,er=0.0": "検証期間で改善(ただし事後選択のため単独では採用しない)",
+      "tv=0.20,er=0.1": "不採用: Calmar改善なし",
+      "tv=0.20,er=0.2": "不採用: Calmar改善なし",
+      "tv=0.20,er=0.3": "不採用: Calmar改善なし",
+      "tv=0.40,er=0.0": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.40,er=0.1": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.40,er=0.2": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.40,er=0.3": "不採用: Calmar改善なし",
+      "tv=0.60,er=0.0": "不採用: Calmar改善なし・リターン悪化・キルスイッチ3回",
+      "tv=0.60,er=0.1": "不採用: Calmar改善なし・リターン悪化・キルスイッチ1回",
+      "tv=0.60,er=0.2": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.60,er=0.3": "不採用: Calmar改善なし・リターン悪化",
+      "tv=0.80,er=0.0": "不採用: Calmar改善なし・リターン悪化・キルスイッチ4回",
+      "tv=0.80,er=0.1": "不採用: Calmar改善なし・リターン悪化・キルスイッチ3回",
+      "tv=0.80,er=0.2": "不採用: Calmar改善なし・リターン悪化・キルスイッチ1回",
+      "tv=0.80,er=0.3": "不採用: Calmar改善なし・リターン悪化"
+    },
+    "windows_wf_ge_base": "4/6",
+    "latest_choice": {
+      "target_vol": 0.1,
+      "er_min": 0.0,
+      "lookback": 60,
+      "vol_window": 20,
+      "max_gross_leverage": 25.0
+    },
+    "adopt": false,
+    "reasons": [
+      "検証期間Calmarが現行以下 (WF -0.263 <= 現行 0.000)",
+      "検証期間リターンが現行未満 (WF -32.2% < 現行 0.0%)",
+      "検証期間中にキルスイッチ発動あり"
+    ]
+  }
+}

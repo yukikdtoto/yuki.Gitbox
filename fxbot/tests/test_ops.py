@@ -8,6 +8,10 @@ from fxbot.state import load_state, save_state
 def test_heartbeat_stale(tmp_path):
     p = tmp_path / "s.json"
     now = datetime(2026, 11, 20, 12, tzinfo=timezone.utc)
+    assert heartbeat.check(p, 30, now)[:2] == (0, "info")      # 初回前の猶予
+    (tmp_path / "INITIALIZED").write_text("x")
+    assert heartbeat.check(p, 30, now)[0] == 1                  # 初期化済みで state 消失
+    p.write_text("{broken")
     assert heartbeat.check(p, 30, now)[0] == 1
     save_state(p, {"schema": 1, "last_run": (now - timedelta(hours=31)).isoformat()})
     rc, lvl, msg = heartbeat.check(p, 30, now)

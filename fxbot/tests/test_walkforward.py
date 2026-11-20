@@ -1,6 +1,7 @@
 from datetime import date
 
 import pandas as pd
+import pytest
 
 from fxbot.backtest import metrics, run_backtest
 from fxbot.strategy import StrategyConfig
@@ -26,8 +27,8 @@ def test_windows_5y():
 def test_metrics():
     s = pd.Series([100, 120, 90, 110.0], index=pd.date_range("2020-01-01", periods=4, freq="365D"))
     m = metrics(s)
-    assert m["max_dd"] == -0.25 and m["total_return"] == 0.1
-    assert m["calmar"] == m["cagr"] / 0.25
+    assert m["max_dd"] == pytest.approx(-0.25) and m["total_return"] == pytest.approx(0.1)
+    assert m["calmar"] == pytest.approx(m["cagr"] / 0.25)
 
 
 def test_backtest_kill_switch_stops_trading():

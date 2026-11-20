@@ -35,7 +35,7 @@ def today():
 @pytest.fixture
 def paths(tmp_path):
     p = Paths(state=tmp_path / "state" / "state.json", halt=tmp_path / "state" / "HALT",
-              params=tmp_path / "params.json")
+              marker=tmp_path / "state" / "INITIALIZED", params=tmp_path / "params.json")
     return p
 
 

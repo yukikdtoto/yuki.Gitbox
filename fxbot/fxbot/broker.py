@@ -30,12 +30,37 @@ class BrokerError(RuntimeError):
     pass
 
 
+class BrokerAmbiguous(BrokerError):
+    """注文が通ったか不明(タイムアウト等)。再送はしない。"""
+
+
 class Broker(Protocol):
     def account(self) -> dict: ...          # {"nav": float, "balance": float, "currency": str, "id_hash": str}
     def positions(self) -> dict[str, int]: ...
     def prices(self) -> dict[str, float]: ...  # mid
-    def market_order(self, pair: str, units: int) -> dict: ...
+    def market_order(self, pair: str, units: int, client_id: str,
+                     stop_loss_distance: float | None = None, reduce_only: bool = False) -> dict: ...
+    def find_order(self, client_id: str) -> dict | None: ...
     def close_all(self) -> list[dict]: ...
+
+
+def check_order_args(pair: str, units: int, client_id: str, stop_loss_distance, reduce_only: bool,
+                     unit_step: int | None = None) -> None:
+    """全ブローカー共通の発注前チェック。SLなしの新規(増し)注文は拒否。"""
+    step = POLICY.unit_step if unit_step is None else unit_step
+    if pair not in PAIRS:
+        raise BrokerRefused(f"pair not allowed: {pair}")
+    if units == 0 or units % step:
+        raise BrokerRefused(f"units must be non-zero multiple of {step}: {units}")
+    if not client_id or len(client_id) > 120 or not client_id.startswith(("fxbot-", "smoke-")):
+        raise BrokerRefused(f"client_id required (fxbot-*/smoke-*): {client_id!r}")
+    if not reduce_only:
+        if stop_loss_distance is None or not (stop_loss_distance > 0):
+            raise BrokerRefused("stop loss is required for every opening order")
+
+
+def format_distance(pair: str, d: float) -> str:
+    return f"{d:.3f}" if pair.endswith("JPY") else f"{d:.5f}"
 
 
 def check_practice_url(url: str) -> str:
@@ -72,13 +97,17 @@ class OandaPracticeBroker:
                                "Accept-Datetime-Format": "RFC3339"})
         self.timeout = timeout
 
-    def _req(self, method: str, path: str, **kw) -> dict:
+    def _req(self, method: str, path: str, allow_404: bool = False, **kw) -> dict | None:
         url = self.base + path
         check_practice_url(self.base)  # 念のため毎回
         try:
             r = self.s.request(method, url, timeout=self.timeout, **kw)
+        except requests.Timeout as e:
+            raise BrokerAmbiguous(f"{method} {path}: timeout: {e}") from e
         except requests.RequestException as e:
             raise BrokerError(f"{method} {path}: {e}") from e
+        if allow_404 and r.status_code == 404:
+            return None
         if r.status_code >= 400:
             raise BrokerError(f"{method} {path}: HTTP {r.status_code} {r.text[:300]}")
         return r.json()
@@ -112,17 +141,46 @@ class OandaPracticeBroker:
             raise BrokerError(f"missing prices: {missing}")
         return out
 
-    def market_order(self, pair: str, units: int) -> dict:
-        if pair not in PAIRS:
-            raise BrokerRefused(f"pair not allowed: {pair}")
-        if units == 0 or units % POLICY.unit_step:
-            raise BrokerRefused(f"units must be non-zero multiple of {POLICY.unit_step}: {units}")
-        body = {"order": {"type": "MARKET", "instrument": pair, "units": str(int(units)),
-                          "timeInForce": "FOK", "positionFill": "DEFAULT"}}
-        r = self._req("POST", f"/v3/accounts/{self.account_id}/orders", json=body)
+    def find_order(self, client_id: str) -> dict | None:
+        """clientExtensions ID で注文を照会(無ければ None)。"""
+        d = self._req("GET", f"/v3/accounts/{self.account_id}/orders/@{client_id}", allow_404=True)
+        return None if d is None else d.get("order")
+
+    def instrument_min_size(self, pair: str) -> float:
+        d = self._req("GET", f"/v3/accounts/{self.account_id}/instruments", params={"instruments": pair})
+        return float(d["instruments"][0]["minimumTradeSize"])
+
+    def market_order(self, pair: str, units: int, client_id: str,
+                     stop_loss_distance: float | None = None, reduce_only: bool = False,
+                     unit_step: int | None = None) -> dict:
+        check_order_args(pair, units, client_id, stop_loss_distance, reduce_only, unit_step)
+        # 冪等: 同じIDの注文が既にあれば再送しない
+        existing = self.find_order(client_id)
+        if existing is not None:
+            if existing.get("state") == "FILLED":
+                return {"existing": True, "order": existing}
+            raise BrokerError(f"order {client_id} already exists in state {existing.get('state')}; not resending")
+        order = {"type": "MARKET", "instrument": pair, "units": str(int(units)),
+                 "timeInForce": "FOK", "positionFill": "REDUCE_ONLY" if reduce_only else "DEFAULT",
+                 "clientExtensions": {"id": client_id, "tag": "fxbot"},
+                 "tradeClientExtensions": {"id": client_id, "tag": "fxbot"}}
+        if not reduce_only:
+            order["stopLossOnFill"] = {"distance": format_distance(pair, stop_loss_distance),
+                                       "timeInForce": "GTC"}
+        try:
+            r = self._req("POST", f"/v3/accounts/{self.account_id}/orders", json={"order": order})
+        except BrokerAmbiguous:
+            # タイムアウト: 再送せず、先にOANDA側の注文履歴を照合
+            found = self.find_order(client_id)
+            if found is not None and found.get("state") == "FILLED":
+                return {"existing": True, "order": found}
+            raise
         if "orderFillTransaction" not in r:
             raise BrokerError(f"order not filled: {str(r)[:300]}")
         return r["orderFillTransaction"]
+
+    def close_trade(self, trade_id: str) -> dict:
+        return self._req("PUT", f"/v3/accounts/{self.account_id}/trades/{trade_id}/close", json={"units": "ALL"})
 
     def close_all(self) -> list[dict]:
         out = []
@@ -144,7 +202,10 @@ class PaperBroker:
         self._pos = {p: 0 for p in PAIRS}
         self._pos.update(positions or {})
         self.orders: list[tuple[str, int]] = []
+        self.order_meta: list[dict] = []
+        self.by_client_id: dict[str, dict] = {}
         self.closed_all = 0
+        self.fail_on_order: int | None = None  # n番目の注文で例外(テスト用)
 
     def account(self):
         if self._currency != POLICY.account_currency:
@@ -158,10 +219,19 @@ class PaperBroker:
     def prices(self):
         return dict(self._prices)
 
-    def market_order(self, pair, units):
-        if units == 0 or units % POLICY.unit_step:
-            raise BrokerRefused("bad units")
+    def find_order(self, client_id):
+        return self.by_client_id.get(client_id)
+
+    def market_order(self, pair, units, client_id, stop_loss_distance=None, reduce_only=False):
+        check_order_args(pair, units, client_id, stop_loss_distance, reduce_only)
+        if client_id in self.by_client_id:
+            return {"existing": True, "order": self.by_client_id[client_id]}
+        if self.fail_on_order is not None and len(self.orders) == self.fail_on_order:
+            raise BrokerError("simulated failure")
         self.orders.append((pair, units))
+        self.order_meta.append({"pair": pair, "units": units, "client_id": client_id,
+                                "sl": stop_loss_distance, "reduce_only": reduce_only})
+        self.by_client_id[client_id] = {"state": "FILLED", "pair": pair, "units": units}
         self._pos[pair] = self._pos.get(pair, 0) + units
         return {"pair": pair, "units": units}
 

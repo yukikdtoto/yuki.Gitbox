@@ -47,3 +47,35 @@ class Notifier:
         except requests.RequestException as e:
             print(f"[notify] failed: {e}", file=sys.stderr)
             return False
+
+
+class HealthPing:
+    """外部 heartbeat(healthchecks.io 互換)。HEALTHCHECK_URL が無ければ何もしない。
+    ping の失敗は取引判断に影響させない(通知のみ)。"""
+
+    def __init__(self, url: str | None = None, notifier: "Notifier | None" = None,
+                 session: requests.Session | None = None):
+        url = url if url is not None else os.environ.get("HEALTHCHECK_URL", "")
+        if url and urlparse(url).scheme != "https":
+            raise NotifyConfigError("HEALTHCHECK_URL must be https")
+        self.url = url.rstrip("/")
+        self.notifier = notifier
+        self.s = session or requests.Session()
+        self.pinged: list[str] = []
+
+    def ping(self, kind: str = "") -> bool:
+        if not self.url:
+            return False
+        u = self.url + (f"/{kind}" if kind else "")
+        self.pinged.append(kind or "success")
+        try:
+            r = self.s.get(u, timeout=10)
+            if r.status_code < 300:
+                return True
+            msg = f"HTTP {r.status_code}"
+        except Exception as e:  # noqa: BLE001
+            msg = str(e)
+        print(f"[healthcheck] ping failed: {msg}", file=sys.stderr)
+        if self.notifier:
+            self.notifier.send("warn", "外部heartbeatのping失敗", msg[:300])
+        return False
